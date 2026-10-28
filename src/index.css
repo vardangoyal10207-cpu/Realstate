@@ -1,0 +1,98 @@
+@import 'leaflet/dist/leaflet.css';
+@import 'leaflet.markercluster/dist/MarkerCluster.css';
+@import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
+  body { @apply bg-cream font-sans text-slate-600 antialiased; }
+  h1, h2, h3, h4 { @apply font-serif text-navy; }
+  :focus-visible { @apply outline-none ring-2 ring-gold ring-offset-2 ring-offset-cream; }
+  .on-navy :focus-visible, .on-navy:focus-visible { @apply ring-offset-navy; }
+  img { @apply max-w-full; }
+  @media (max-width: 767px) { body.has-bottom-bar { padding-bottom: 4.25rem; } }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  }
+}
+
+@layer components {
+  .container-x { @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8; }
+  .section { @apply py-14 md:py-20; }
+  .eyebrow { @apply mb-2 text-xs font-semibold uppercase tracking-[.18em] text-gold-dark; }
+  .on-navy .eyebrow { @apply text-gold; }
+  .h-section { @apply font-serif text-3xl font-semibold text-navy md:text-4xl; }
+
+  .btn { @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-ctl px-5 py-2.5 text-sm font-semibold transition duration-200 disabled:cursor-not-allowed disabled:opacity-60; }
+  .btn-primary { @apply btn bg-navy text-white hover:bg-navy-700 active:scale-[.98]; }
+  .btn-gold { @apply btn bg-gold text-navy hover:bg-gold-light active:scale-[.98]; }
+  .btn-outline { @apply btn border border-navy/25 bg-white text-navy hover:border-navy hover:bg-cream-200; }
+  .btn-ghost { @apply btn text-navy hover:bg-navy/5; }
+  .btn-danger { @apply btn bg-red-700 text-white hover:bg-red-800; }
+  .btn-whatsapp { @apply btn bg-[#128C4A] text-white hover:bg-[#0d7a3f]; }
+  .btn-sm { @apply min-h-[36px] px-3 py-1.5 text-xs; }
+
+  .card { @apply rounded-card bg-white shadow-card; }
+  .label { @apply mb-1.5 block text-sm font-medium text-navy; }
+  .input { @apply w-full rounded-ctl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-500 transition duration-200 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/60; }
+  .input[aria-invalid='true'] { @apply border-red-600 focus:ring-red-300; }
+  .field-error { @apply mt-1 text-xs font-medium text-red-700; }
+  .chip { @apply inline-flex items-center gap-1.5 rounded-full border border-navy/15 bg-white px-3 py-1 text-xs font-medium text-navy; }
+}
+
+/* Skeleton shimmer */
+.skeleton { position: relative; overflow: hidden; background: #e7e3d9; }
+.skeleton::after {
+  content: ''; position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.6), transparent);
+  animation: shimmer 1.4s infinite;
+}
+
+/* Dual price slider */
+.dual-range { position: relative; height: 28px; }
+.dual-range .track { position: absolute; left: 0; right: 0; top: 12px; height: 4px; border-radius: 4px; background: #cbd5e1; }
+.dual-range .fill { position: absolute; top: 12px; height: 4px; border-radius: 4px; background: #0B1F3A; }
+.dual-range input[type='range'] {
+  position: absolute; inset: 0; width: 100%; margin: 0; background: none; pointer-events: none;
+  appearance: none; -webkit-appearance: none; height: 28px;
+}
+.dual-range input[type='range']::-webkit-slider-runnable-track { background: transparent; height: 28px; }
+.dual-range input[type='range']::-moz-range-track { background: transparent; }
+.dual-range input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none; pointer-events: auto; height: 22px; width: 22px; margin-top: 3px; border-radius: 50%;
+  background: #C9A24B; border: 3px solid #0B1F3A; cursor: grab; box-shadow: 0 2px 6px rgba(0,0,0,.25);
+}
+.dual-range input[type='range']::-moz-range-thumb {
+  pointer-events: auto; height: 16px; width: 16px; border-radius: 50%;
+  background: #C9A24B; border: 3px solid #0B1F3A; cursor: grab;
+}
+.dual-range input[type='range']:focus-visible::-webkit-slider-thumb { outline: 3px solid #C9A24B; outline-offset: 2px; }
+.dual-range input[type='range']:focus-visible::-moz-range-thumb { outline: 3px solid #C9A24B; outline-offset: 2px; }
+
+/* Leaflet customisation */
+.leaflet-container { font-family: Inter, system-ui, sans-serif; z-index: 0; background: #e8e4da; }
+.price-pin {
+  display: inline-block; transform: translate(-50%, -100%); white-space: nowrap;
+  background: #0B1F3A; color: #fff; font-weight: 600; font-size: 12px; line-height: 1;
+  padding: 7px 10px; border-radius: 999px; border: 2px solid #fff; box-shadow: 0 4px 12px rgba(11,31,58,.4);
+  transition: transform .2s, background .2s; cursor: pointer; position: relative;
+}
+.price-pin::after {
+  content: ''; position: absolute; left: 50%; bottom: -6px; width: 9px; height: 9px; background: inherit;
+  transform: translateX(-50%) rotate(45deg); border-right: 2px solid #fff; border-bottom: 2px solid #fff;
+}
+.price-pin:hover { background: #27497a; }
+.price-pin.gold { background: #C9A24B; color: #0B1F3A; font-size: 13px; z-index: 500; }
+.price-pin.sold { background: #64748b; }
+.leaflet-popup-content-wrapper { border-radius: 16px; padding: 0; overflow: hidden; }
+.leaflet-popup-content { margin: 0; width: 240px !important; }
+.leaflet-popup-close-button { background: rgba(255,255,255,.9); border-radius: 999px; width: 26px !important; height: 26px !important; margin: 6px; line-height: 24px; text-align: center; padding: 0 !important; }
+.marker-cluster-small, .marker-cluster-medium, .marker-cluster-large { background-color: rgba(201,162,75,.35); }
+.marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div { background-color: #0B1F3A; color: #fff; font-weight: 700; }
+
+.scrollbar-none { scrollbar-width: none; }
+.scrollbar-none::-webkit-scrollbar { display: none; }
